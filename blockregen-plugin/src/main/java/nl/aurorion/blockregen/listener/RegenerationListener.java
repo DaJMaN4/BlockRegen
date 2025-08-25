@@ -2,8 +2,10 @@ package nl.aurorion.blockregen.listener;
 
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
+import com.gamingmesh.jobs.Jobs;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.TownBlock;
+import io.lumine.mythic.lib.api.item.NBTItem;
 import lombok.extern.java.Log;
 import nl.aurorion.blockregen.BlockRegenPlugin;
 import nl.aurorion.blockregen.Message;
@@ -80,11 +82,42 @@ public class RegenerationListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
+        if (doDrop(event)) {
+            event.setCancelled(true);
+            return;
+        }
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
         handleEvent(block, player, event, EventType.BLOCK_BREAK);
     }
+
+
+    private boolean doDrop(BlockBreakEvent e) {
+
+        if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL))
+            return false;
+
+        NBTItem nbtItem = NBTItem.get(e.getPlayer().getInventory().getItemInMainHand());
+        String neededLevelType = null;
+        int playersLevel = 0;
+        int neededLevel = 0;
+        if (nbtItem.hasTag("MMOITEMS_REQUIERED_TYPE") && nbtItem.hasTag("MMOITEMS_REQUIERED_LEVEL")) {
+            neededLevelType = nbtItem.getString("MMOITEMS_REQUIERED_TYPE");
+            if (neededLevelType.equals("MINER")) {
+                playersLevel = Jobs.getPlayerManager().getJobsPlayer(e.getPlayer()).getJobProgression(Jobs.getJob("Górnik")).getLevel();
+            }
+            else if (neededLevelType.equals("SLAYER")) {
+                playersLevel = Jobs.getPlayerManager().getJobsPlayer(e.getPlayer()).getJobProgression(Jobs.getJob("Wojownik")).getLevel();
+            }
+            neededLevel = nbtItem.getInteger("MMOITEMS_REQUIERED_TYPE");
+        }
+        if (playersLevel > neededLevel) {
+            return true;
+        }
+        return false;
+    }
+
 
     private <E extends Cancellable> void handleEvent(Block block, Player player, E event, EventType type) {
         // Check if the block is regenerating already

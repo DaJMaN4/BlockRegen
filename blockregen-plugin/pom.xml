@@ -206,8 +206,9 @@
         <dependency>
             <groupId>com.bekvon.bukkit</groupId>
             <artifactId>Residence</artifactId>
-            <version>${project.dependencies.residence.version}</version>
-            <scope>provided</scope>
+            <version>Residence5.1.6.0</version>
+            <systemPath>${project.basedir}/lib/Residence5.1.6.0.jar</systemPath>
+            <scope>system</scope>
         </dependency>
         <!-- Placeholder API -->
         <dependency>
@@ -234,8 +235,9 @@
         <dependency>
             <groupId>com.gamingmesh.jobs</groupId>
             <artifactId>Jobs</artifactId>
-            <version>${project.dependencies.jobs.version}</version>
-            <scope>provided</scope>
+            <version>Jobs5.2.4.0</version>
+            <systemPath>${project.basedir}/lib/Jobs5.2.4.0.jar</systemPath>
+            <scope>system</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-library -->
         <dependency>
